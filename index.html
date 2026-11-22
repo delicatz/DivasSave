@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Divas Save</title>
+</head>
+<body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="gTeal" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#e6ffff"/><stop offset=".45" stop-color="#7fd6d9"/><stop offset="1" stop-color="#3fa9b0"/></radialGradient>
+    <radialGradient id="gPink" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#ffe3ea"/><stop offset=".45" stop-color="#f58ba7"/><stop offset="1" stop-color="#d9557c"/></radialGradient>
+    <radialGradient id="gSilver" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#e4e4ea"/><stop offset="1" stop-color="#b9b9c6"/></radialGradient>
+    <path id="starP" d="M50 8 L62 36 L92 38 L69 58 L77 88 L50 72 L23 88 L31 58 L8 38 L38 36 Z"/>
+  </defs>
+</svg>
+    <h1><span>Want to be a Diva?</span></h1>
+    <h1><span>Then <i class="sticker">Save</i> your money</span></h1>
+    <p class="intro">We all laid in bed, doom scrolling then we see the
+        most beautiful piece of clothing ever. You find the site and
+        of course once you curated the perfect out to make the world jealous
+        you, your card declines. With this finance tracker never again will this
+        happen!
+    </p>
+    <a class="btn" href="#add">Add your first buy</a>
+    </div>
+    <div class="wrap">
+      <div class="pic1">
+        <div class="bal" aria-live="polite">
+          <small>Left to spend</small>
+          <b id="balance">$0.00</b>
+          <div class="sec"><span class="secs" id="inTotal">+ $0</span><span class="pill" id="outTotal">− $0</span></div>
+        </div>
+      </div>
+      <svg class="star s1" viewBox="0 0 100 100" aria-hidden="true"><use href="#starP" fill="url(#gTeal)" stroke="url(#gTeal)" stroke-width="10" stroke-linejoin="round"/></svg>
+      <svg class="star s2" viewBox="0 0 100 100" aria-hidden="true"><use href="#starP" fill="url(#gPink)" stroke="url(#gPink)" stroke-width="10" stroke-linejoin="round"/></svg>
+      <svg class="star s3" viewBox="0 0 100 100" aria-hidden="true"><use href="#starP" fill="url(#gSilver)" stroke="url(#gSilver)" stroke-width="10" stroke-linejoin="round"/></svg>
+    </div>
+  </section>
+  <section class="grid">
+    <form class="panel" id="add" autocomplete="off">
+      <h2>Add money moves</h2>
+      <div class="seg" role="group" aria-label="Type">
+        <button type="button" id="tOut" aria-pressed="true">Spent</button>
+        <button type="button" id="tIn" aria-pressed="false">Earned</button>
+      </div>
+      <label for="desc">What was it?</label>
+      <input id="desc" maxlength="40" placeholder="Iced coffee">
+      <div class="row">
+        <div><label for="amt">How much?</label><input id="amt" type="number" min="0" step="0.01" inputmode="decimal" placeholder="4.50"></div>
+        <div><label for="cat">Category</label>
+          <select id="cat"><option>Food</option><option>Rent</option><option>Fun</option><option>Transit</option><option>Shopping</option><option>Pay</option><option>Other</option></select></div>
+      </div>
+      <p class="err" id="err" role="alert"></p>
+      <button class="btn" type="submit" id="submit">Add spend</button>
+    </form>
+    <div class="panel">
+      <h2>Where it went</h2>
+      <div class="bars" id="bars"></div>
+      <h2>Recent</h2>
+      <ul id="list"></ul>
+      <button class="clear" id="clear" type="button">Clear everything</button>
+    </div>
+  </section>
+</main>
+<div class="socials">
+    <a href="https://github.com/delicatz"><p>GitHub</p></a>
+    <a href="https://www.instagram.com/jaysgalleries?bqrl=MmNnYWpsZnE5bnlo&utm_source=qr"><p>Instagram</p></a>
+</div>
+<footer>
+    <center><p>&copy; 2026 Cash Tracker</p></center>
+</footer>
+<script>
+(function(){
+  var KEY='cash-tracker-v1', tx=[], type='out';
+  var colors=['#e8408c','#2433c8','#c5f56e','#f58ba7','#7fd6d9'];
+  var $=function(id){return document.getElementById(id)};
+  var fmt=function(n){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n)};
+  function load(){
+    try{var r=localStorage.getItem(KEY);if(r){tx=JSON.parse(r);return}}catch(e){}
+    var d=new Date().toISOString().slice(0,10);
+    tx=[{id:1,desc:'Paycheck',amt:420,type:'in',cat:'Pay',date:d},{id:2,desc:'Iced coffee',amt:4.5,type:'out',cat:'Food',date:d},{id:3,desc:'Bus pass',amt:32,type:'out',cat:'Transit',date:d},{id:4,desc:'Concert tickets',amt:65,type:'out',cat:'Fun',date:d}];
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(tx))}catch(e){}}
+  function esc(s){return s.replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function render(){
+    var inn=0,out=0,cats={};
+    tx.forEach(function(t){if(t.type==='in')inn+=t.amt;else{out+=t.amt;cats[t.cat]=(cats[t.cat]||0)+t.amt}});
+    var bal=inn-out,b=$('balance');
+    b.textContent=fmt(bal);b.className=bal<0?'neg':'';
+    $('inTotal').textContent='+ '+fmt(inn);$('outTotal').textContent='− '+fmt(out);
+    var keys=Object.keys(cats).sort(function(a,c){return cats[c]-cats[a]}),max=keys.length?cats[keys[0]]:1;
+    $('bars').innerHTML=keys.length?keys.map(function(k,i){return '<div class="bar"><div class="t"><span>'+esc(k)+'</span><span>'+fmt(cats[k])+'</span></div><div class="track"><div class="fill" style="width:'+Math.max(4,cats[k]/max*100)+'%;background:'+colors[i%colors.length]+'"></div></div></div>'}).join(''):'<p class="empty">No spending yet. Add one to see where it goes.</p>';
+    var rows=tx.slice().reverse();
+    $('list').innerHTML=rows.length?rows.map(function(t){return '<li><span class="d"><b>'+esc(t.desc)+'</b><i>'+esc(t.cat)+' · '+t.date+'</i></span><span class="a '+(t.type==='out'?'out':'')+'">'+(t.type==='out'?'− ':'+ ')+fmt(t.amt)+'</span><button type="button" data-id="'+t.id+'" aria-label="Delete '+esc(t.desc)+'">×</button></li>'}).join(''):'<li class="empty" style="display:block;border:none;background:none">Nothing here yet. Add what you spent or earned.</li>';
+  }
+  function setType(t){
+    type=t;$('tOut').setAttribute('aria-pressed',t==='out');$('tIn').setAttribute('aria-pressed',t==='in');
+    $('submit').textContent=t==='out'?'Add spend':'Add income';
+    if(t==='in')$('cat').value='Pay';
+  }
+  $('tOut').onclick=function(){setType('out')};
+  $('tIn').onclick=function(){setType('in')};
+  $('add').onsubmit=function(e){
+    e.preventDefault();
+    var d=$('desc').value.trim(),a=parseFloat($('amt').value);
+    if(!d){$('err').textContent='Add a name so you can find it later.';$('desc').focus();return}
+    if(!(a>0)){$('err').textContent='Enter an amount greater than $0.';$('amt').focus();return}
+    $('err').textContent='';
+    tx.push({id:Date.now(),desc:d,amt:Math.round(a*100)/100,type:type,cat:$('cat').value,date:new Date().toISOString().slice(0,10)});
+    save();render();$('desc').value='';$('amt').value='';$('desc').focus();
+  };
+  $('list').onclick=function(e){
+    var id=e.target.getAttribute&&e.target.getAttribute('data-id');if(!id)return;
+    tx=tx.filter(function(t){return String(t.id)!==id});save();render();
+  };
+  $('clear').onclick=function(){if(confirm('Delete all entries? This can’t be undone.')){tx=[];save();render()}};
+  load();render();
+})();
+var clearTimer;
+$('clear').onclick=function(){
+  var b=$('clear');
+  if(b.getAttribute('data-sure')){clearTimeout(clearTimer);b.removeAttribute('data-sure');b.textContent='Clear everything';tx=[];save();render();return}
+  b.setAttribute('data-sure','1');b.textContent='Tap again to delete everything';
+  clearTimer=setTimeout(function(){b.removeAttribute('data-sure');b.textContent='Clear everything'},4000);
+};
+</script>
+</body>
+</html> 
